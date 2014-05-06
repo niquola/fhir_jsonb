@@ -7,3 +7,19 @@ select count(*) from  test_jsonb;
      0
 (1 row)
 
+select  count(*) from patients;
+ count  
+--------
+ 146644
+(1 row)
+
+medapp=# select  count(*) from visits;
+ count  
+--------
+ 564369
+(1 row)
+
+ select  count(*) from observations.lab_tests;
+  count  
+  ---------
+ 8639810
