@@ -1,25 +1,23 @@
-CREATE EXTENSION jsquery;
 CREATE EXTENSION fhir_jsonb;
 set escape_string_warning=off;
-select count(*) from  test_jsonb;
+select count(*)
+from patients;
  count 
 -------
-     0
+   100
 (1 row)
 
-select  count(*) from patients;
- count  
---------
- 146644
+select count(*)
+from encounters;
+ count 
+-------
+  1000
 (1 row)
 
-medapp=# select  count(*) from visits;
- count  
---------
- 564369
+select count(*)
+from observations;
+ count 
+-------
+ 10000
 (1 row)
 
- select  count(*) from observations.lab_tests;
-  count  
-  ---------
- 8639810
