@@ -1,0 +1,6 @@
+# jsquery extension
+comment = 'tests for json b'
+default_version = '1.0'
+module_pathname = '$libdir/fhir_jsonb'
+relocatable = true
+
