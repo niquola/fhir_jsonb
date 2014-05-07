@@ -111,16 +111,16 @@ BEGIN
                     '{{\.status}}',
                     encounter_random_status()
                   ),
-                  '{{.class}}',
+                  '{{\.class}}',
                   encounter_random_class()
                 ),
-                '{{.part_type}}',
+                '{{\.part_type}}',
                 encounter_random_part_type()
               ),
-              '{{.phys}}',
+              '{{\.phys}}',
               encounter_random_phys()
             ),
-            '{{.reason}}',
+            '{{\.reason}}',
             encounter_random_reason()
           ),
           '{{\.start_time}}',
