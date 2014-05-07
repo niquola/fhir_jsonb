@@ -1,6 +1,23 @@
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
 \echo Use "CREATE EXTENSION fhir_jsonb" to load this file. \quit
 
+CREATE FUNCTION random_start_time()
+  RETURNS varchar AS
+$func$
+BEGIN
+  RETURN CAST(now() - '1 year'::interval * random() AS date);
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+-- TODO: End time be greater than start time.
+CREATE FUNCTION random_end_time()
+  RETURNS varchar AS
+$func$
+BEGIN
+  RETURN CAST(now() - '1 year'::interval * random() AS date);
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
 CREATE FUNCTION encounter_random_status()
   RETURNS varchar AS
 $func$
@@ -48,23 +65,6 @@ DECLARE
   a varchar[] := array['f asdfsd fasdfsad fdasfklsdjaflksda fjsdafjasdklf jsdklfj','fdaff asdf asdfasdf sdaf asdfsd fasdfsad fdasfk','lsdjaflksda fjsdafjasdklf jsdklfj'];
 BEGIN
   RETURN a[floor((random()*3))::int];
-END
-$func$ LANGUAGE plpgsql VOLATILE;
-
-CREATE FUNCTION encounter_random_start_time()
-  RETURNS varchar AS
-$func$
-BEGIN
-  RETURN CAST(now() - '1 year'::interval * random() AS date);
-END
-$func$ LANGUAGE plpgsql VOLATILE;
-
--- TODO: End time be greater than start time.
-CREATE FUNCTION encounter_random_end_time()
-  RETURNS varchar AS
-$func$
-BEGIN
-  RETURN CAST(now() - '1 year'::interval * random() AS date);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -134,10 +134,10 @@ BEGIN
             encounter_random_reason()
           ),
           '{{\.start_time}}',
-          encounter_random_start_time()
+          random_start_time()
         ),
         '{{\.end_time}}',
-        encounter_random_end_time()
+        random_end_time()
       )
       AS jsonb
     )
@@ -154,9 +154,17 @@ BEGIN
   SELECT
     CAST (
       regexp_replace(
-        regexp_replace(template, '{{\.id}}', n::varchar),
-        '{{\.name}}',
-        observation_random_name()
+        regexp_replace(
+          regexp_replace(
+            regexp_replace(template, '{{\.id}}', n::varchar),
+            '{{\.name}}',
+            observation_random_name()
+          ),
+          '{{\.start_time}}',
+          random_start_time()
+        ),
+        '{{\.end_time}}',
+        random_end_time()
       )
       AS jsonb
     )
