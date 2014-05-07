@@ -68,6 +68,16 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
+CREATE FUNCTION observation_random_name()
+  RETURNS varchar AS
+$func$
+DECLARE
+  a varchar[] := array['"name": {"coding": [{"system": "http://loinc.org", "code": "8310-5", "display": "Body temperature"}], "text": "Body temperature"},', '"name": {"coding": [{"system": "http://loinc.org", "code": "55284-4", "display": "Blood pressure systolic \& diastolic"}]},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},'];
+BEGIN
+  RETURN a[floor((random()*10))::int];
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
 DROP TABLE IF EXISTS patients;
 DROP TABLE IF EXISTS encounters;
 DROP TABLE IF EXISTS observations;
@@ -146,7 +156,7 @@ BEGIN
       regexp_replace(
         regexp_replace(template, '{{\.id}}', n::varchar),
         '{{\.name}}',
-        ''
+        observation_random_name()
       )
       AS jsonb
     )
