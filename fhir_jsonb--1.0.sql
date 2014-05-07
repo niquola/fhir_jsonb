@@ -78,6 +78,17 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
+
+CREATE FUNCTION observation_random_status()
+  RETURNS varchar AS
+$func$
+DECLARE
+  a varchar[] := array['amended','cancelled','entered in error','final','preliminary','registered'];
+BEGIN
+  RETURN a[floor((random()*6))::int];
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
 DROP TABLE IF EXISTS patients;
 DROP TABLE IF EXISTS encounters;
 DROP TABLE IF EXISTS observations;
@@ -156,15 +167,19 @@ BEGIN
       regexp_replace(
         regexp_replace(
           regexp_replace(
-            regexp_replace(template, '{{\.id}}', n::varchar),
-            '{{\.name}}',
-            observation_random_name()
+            regexp_replace(
+              regexp_replace(template, '{{\.id}}', n::varchar),
+              '{{\.name}}',
+              observation_random_name()
+            ),
+            '{{\.start_time}}',
+            random_start_time()
           ),
-          '{{\.start_time}}',
-          random_start_time()
+          '{{\.end_time}}',
+          random_end_time()
         ),
-        '{{\.end_time}}',
-        random_end_time()
+        '{{\.status}}',
+        observation_random_status()
       )
       AS jsonb
     )
