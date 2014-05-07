@@ -21,6 +21,26 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
+CREATE FUNCTION encounter_random_part_type()
+  RETURNS varchar AS
+$func$
+DECLARE
+  a varchar[] := array['ADM','ATND','CALLBCK','CON','DIS','ESC','REF'];
+BEGIN
+  RETURN a[floor((random()*7))::int];
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+CREATE FUNCTION encounter_random_phys()
+  RETURNS varchar AS
+$func$
+DECLARE
+  a varchar[] := array['Charles R. Drew','Helen Flanders Dunbar','Galen','Ian Olver','Garcia de Orta','Christiaan Eijkman','Pierre Fauchard','Rene Geronimo Favaloro','Alexander Fleming','Girolamo Fracastoro','Sigmund Freud','Daniel Carleton Gajdusek','Henry Gray','George E. Goodfellow','William Harvey','Ernst Haeckel','Henry Heimlich','Orvan Hess','John Hunter','Hippocrates','Elliott P. Joslin','Edward Jenner'];
+BEGIN
+  RETURN a[floor((random()*22))::int];
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
 DROP TABLE IF EXISTS patients;
 DROP TABLE IF EXISTS encounters;
 DROP TABLE IF EXISTS observations;
@@ -55,12 +75,20 @@ BEGIN
     CAST (
       regexp_replace(
         regexp_replace(
-          regexp_replace(template, '{{\.i}}', n::varchar),
-          '{{\.status}}',
-          encounter_random_status()
+          regexp_replace(
+            regexp_replace(
+              regexp_replace(template, '{{\.i}}', n::varchar),
+              '{{\.status}}',
+              encounter_random_status()
+            ),
+            '{{.class}}',
+            encounter_random_class()
+          ),
+          '{{.part_type}}',
+          encounter_random_part_type()
         ),
-        '{{.class}}',
-        encounter_random_class()
+        '{{.phys}}',
+        encounter_random_phys()
       )
       AS jsonb
     )
