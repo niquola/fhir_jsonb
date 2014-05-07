@@ -134,6 +134,21 @@ BEGIN
   FROM generate_series(1, 1000) n;
 END $$;
 
-insert into observations (doc)
-select '{}'::jsonb
-from generate_series(1, 10000) n;
+DO $$
+DECLARE template varchar;
+BEGIN
+  SELECT '{"resourceType": "Observation", "text": {"status": "generated", "div": ""}, {{.name}} "valueQuantity": {"value": 39, "units": "degrees C", "system": "http://snomed.info/sct", "code": "258710007"}, "interpretation": {"coding": [{"system": "http://hl7.org/fhir/v2/0078", "code": "H"}]}, "appliesPeriod": {"start": "{{.start_time}}", "end": "{{.end_time}}"}, "issued": "2013-04-04T13:27:00+01:00", "status": "{{.status}}", "reliability": "questionable", "bodySite": {"coding": [{"system": "http://snomed.info/sct", "code": "38266002", "display": "Entire body as a whole"}]}, "method": {"coding": [{"system": "http://snomed.info/sct", "code": "89003005", "display": "Oral temperature taking"}]}, "subject": {"reference": "Patient/{{.id}}", "display": "Patient {{.id}}"}, "performer": [{"reference": "Practitioner/f201"}], "referenceRange": [{"low": {"value": 37.5, "units": "degrees C"}}]}'
+  INTO template;
+
+  INSERT INTO observations (doc)
+  SELECT
+    CAST (
+      regexp_replace(
+        regexp_replace(template, '{{\.id}}', n::varchar),
+        '{{\.name}}',
+        ''
+      )
+      AS jsonb
+    )
+  FROM generate_series(1, 10000) n;
+END $$;
