@@ -11,6 +11,16 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
+CREATE FUNCTION encounter_random_class()
+  RETURNS varchar AS
+$func$
+DECLARE
+  a varchar[] := array['emergency','inpatient'];
+BEGIN
+  RETURN a[floor((random()*2))::int];
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
 DROP TABLE IF EXISTS patients;
 DROP TABLE IF EXISTS encounters;
 DROP TABLE IF EXISTS observations;
@@ -42,11 +52,18 @@ BEGIN
 
   INSERT INTO encounters (doc)
   SELECT
-    CAST (regexp_replace(
-        regexp_replace(template, '{{\.i}}', n::varchar),
-        '{{\.status}}',
-        encounter_random_status())
-      AS jsonb)
+    CAST (
+      regexp_replace(
+        regexp_replace(
+          regexp_replace(template, '{{\.i}}', n::varchar),
+          '{{\.status}}',
+          encounter_random_status()
+        ),
+        '{{.class}}',
+        encounter_random_class()
+      )
+      AS jsonb
+    )
   FROM generate_series(1, 1000) n;
 END $$;
 
