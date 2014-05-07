@@ -59,6 +59,15 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
+-- TODO: End time be greater than start time.
+CREATE FUNCTION encounter_random_end_time()
+  RETURNS varchar AS
+$func$
+BEGIN
+  RETURN CAST(now() - '1 year'::interval * random() AS date);
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
 DROP TABLE IF EXISTS patients;
 DROP TABLE IF EXISTS encounters;
 DROP TABLE IF EXISTS observations;
@@ -97,24 +106,28 @@ BEGIN
             regexp_replace(
               regexp_replace(
                 regexp_replace(
-                  regexp_replace(template, '{{\.i}}', n::varchar),
-                  '{{\.status}}',
-                  encounter_random_status()
+                  regexp_replace(
+                    regexp_replace(template, '{{\.i}}', n::varchar),
+                    '{{\.status}}',
+                    encounter_random_status()
+                  ),
+                  '{{.class}}',
+                  encounter_random_class()
                 ),
-                '{{.class}}',
-                encounter_random_class()
+                '{{.part_type}}',
+                encounter_random_part_type()
               ),
-              '{{.part_type}}',
-              encounter_random_part_type()
+              '{{.phys}}',
+              encounter_random_phys()
             ),
-            '{{.phys}}',
-            encounter_random_phys()
+            '{{.reason}}',
+            encounter_random_reason()
           ),
-          '{{.reason}}',
-          encounter_random_reason()
+          '{{\.start_time}}',
+          encounter_random_start_time()
         ),
-        '{{\.start_time}}',
-        encounter_random_start_time()
+        '{{\.end_time}}',
+        encounter_random_end_time()
       )
       AS jsonb
     )
