@@ -27,13 +27,25 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
+CREATE FUNCTION random_array_element(a varchar[])
+  RETURNS varchar AS
+$func$
+DECLARE
+  a ALIAS FOR $1;
+  l int := array_length(a, 1);
+BEGIN
+  -- <http://stackoverflow.com/questions/14299043/postgresql-pl-pgsql-random-value-from-array-of-values#14328164>.
+  RETURN a[floor((random()*l))::int];
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
 CREATE FUNCTION encounter_random_status()
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['planned','in progress','onleave','finished','cancelled'];
 BEGIN
-  RETURN a[floor((random()*5))::int];
+  RETURN random_array_element(a);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -43,7 +55,7 @@ $func$
 DECLARE
   a varchar[] := array['emergency','inpatient'];
 BEGIN
-  RETURN a[floor((random()*2))::int];
+  RETURN random_array_element(a);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -53,7 +65,7 @@ $func$
 DECLARE
   a varchar[] := array['ADM','ATND','CALLBCK','CON','DIS','ESC','REF'];
 BEGIN
-  RETURN a[floor((random()*7))::int];
+  RETURN random_array_element(a);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -63,7 +75,7 @@ $func$
 DECLARE
   a varchar[] := array['Charles R. Drew','Helen Flanders Dunbar','Galen','Ian Olver','Garcia de Orta','Christiaan Eijkman','Pierre Fauchard','Rene Geronimo Favaloro','Alexander Fleming','Girolamo Fracastoro','Sigmund Freud','Daniel Carleton Gajdusek','Henry Gray','George E. Goodfellow','William Harvey','Ernst Haeckel','Henry Heimlich','Orvan Hess','John Hunter','Hippocrates','Elliott P. Joslin','Edward Jenner'];
 BEGIN
-  RETURN a[floor((random()*22))::int];
+  RETURN random_array_element(a);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -73,7 +85,7 @@ $func$
 DECLARE
   a varchar[] := array['f asdfsd fasdfsad fdasfklsdjaflksda fjsdafjasdklf jsdklfj','fdaff asdf asdfasdf sdaf asdfsd fasdfsad fdasfk','lsdjaflksda fjsdafjasdklf jsdklfj'];
 BEGIN
-  RETURN a[floor((random()*3))::int];
+  RETURN random_array_element(a);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -83,7 +95,7 @@ $func$
 DECLARE
   a varchar[] := array['"name": {"coding": [{"system": "http://loinc.org", "code": "8310-5", "display": "Body temperature"}], "text": "Body temperature"},', '"name": {"coding": [{"system": "http://loinc.org", "code": "55284-4", "display": "Blood pressure systolic \& diastolic"}]},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},'];
 BEGIN
-  RETURN a[floor((random()*10))::int];
+  RETURN random_array_element(a);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -94,7 +106,7 @@ $func$
 DECLARE
   a varchar[] := array['amended','cancelled','entered in error','final','preliminary','registered'];
 BEGIN
-  RETURN a[floor((random()*6))::int];
+  RETURN random_array_element(a);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
