@@ -13,6 +13,11 @@ ORDER BY doc #>> '{active}';
 select count(*)
 from encounters;
 
+SELECT DISTINCT ON (doc #>> '{status}')
+doc #>> '{status}'
+FROM encounters
+ORDER BY doc #>> '{status}';
+
 select count(*)
 from observations;
 

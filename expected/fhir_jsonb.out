@@ -25,6 +25,19 @@ from encounters;
   1000
 (1 row)
 
+SELECT DISTINCT ON (doc #>> '{status}')
+doc #>> '{status}'
+FROM encounters
+ORDER BY doc #>> '{status}';
+  ?column?   
+-------------
+ cancelled
+ finished
+ in progress
+ onleave
+ planned
+(5 rows)
+
 select count(*)
 from observations;
  count 
