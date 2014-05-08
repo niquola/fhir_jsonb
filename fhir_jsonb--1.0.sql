@@ -1,44 +1,6 @@
 -- complain if script is sourced in psql, rather than via CREATE EXTENSION
 \echo Use "CREATE EXTENSION fhir_jsonb" to load this file. \quit
 
-CREATE FUNCTION random_start_time()
-  RETURNS varchar AS
-$func$
-BEGIN
-  RETURN random_time();
-END
-$func$ LANGUAGE plpgsql VOLATILE;
-
--- TODO: End time be greater than start time.
-CREATE FUNCTION random_end_time()
-  RETURNS varchar AS
-$func$
-BEGIN
-  RETURN random_time();
-END
-$func$ LANGUAGE plpgsql VOLATILE;
-
-CREATE FUNCTION random_time()
-  RETURNS varchar AS
-$func$
-BEGIN
-  -- <http://stackoverflow.com/questions/2139396/postgresql-change-date-by-the-random-number-of-days#2139582>.
-  RETURN CAST(now() - '1 year'::interval * random() AS date);
-END
-$func$ LANGUAGE plpgsql VOLATILE;
-
-CREATE FUNCTION random_array_element(a varchar[])
-  RETURNS varchar AS
-$func$
-DECLARE
-  a ALIAS FOR $1;
-  l int := array_length(a, 1);
-BEGIN
-  -- <http://stackoverflow.com/questions/14299043/postgresql-pl-pgsql-random-value-from-array-of-values#14328164>.
-  RETURN a[floor((random()*l))::int];
-END
-$func$ LANGUAGE plpgsql VOLATILE;
-
 CREATE FUNCTION encounter_random_status()
   RETURNS varchar AS
 $func$
@@ -107,6 +69,44 @@ DECLARE
   a varchar[] := array['amended','cancelled','entered in error','final','preliminary','registered'];
 BEGIN
   RETURN random_array_element(a);
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+CREATE FUNCTION random_array_element(a varchar[])
+  RETURNS varchar AS
+$func$
+DECLARE
+  a ALIAS FOR $1;
+  l int := array_length(a, 1);
+BEGIN
+  -- <http://stackoverflow.com/questions/14299043/postgresql-pl-pgsql-random-value-from-array-of-values#14328164>.
+  RETURN a[floor((random()*l))::int];
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+CREATE FUNCTION random_start_time()
+  RETURNS varchar AS
+$func$
+BEGIN
+  RETURN random_time();
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+-- TODO: End time be greater than start time.
+CREATE FUNCTION random_end_time()
+  RETURNS varchar AS
+$func$
+BEGIN
+  RETURN random_time();
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+CREATE FUNCTION random_time()
+  RETURNS varchar AS
+$func$
+BEGIN
+  -- <http://stackoverflow.com/questions/2139396/postgresql-change-date-by-the-random-number-of-days#2139582>.
+  RETURN CAST(now() - '1 year'::interval * random() AS date);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
