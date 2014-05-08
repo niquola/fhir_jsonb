@@ -38,6 +38,16 @@ ORDER BY doc #>> '{status}';
  planned
 (5 rows)
 
+SELECT DISTINCT ON (doc #>> '{class}')
+doc #>> '{class}'
+FROM encounters
+ORDER BY doc #>> '{class}';
+ ?column?  
+-----------
+ emergency
+ inpatient
+(2 rows)
+
 select count(*)
 from observations;
  count 

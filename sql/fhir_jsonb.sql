@@ -18,6 +18,11 @@ doc #>> '{status}'
 FROM encounters
 ORDER BY doc #>> '{status}';
 
+SELECT DISTINCT ON (doc #>> '{class}')
+doc #>> '{class}'
+FROM encounters
+ORDER BY doc #>> '{class}';
+
 select count(*)
 from observations;
 
