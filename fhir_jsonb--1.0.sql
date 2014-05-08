@@ -18,11 +18,11 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
--- <http://stackoverflow.com/questions/2139396/postgresql-change-date-by-the-random-number-of-days#2139582>.
 CREATE FUNCTION random_time()
   RETURNS varchar AS
 $func$
 BEGIN
+  -- <http://stackoverflow.com/questions/2139396/postgresql-change-date-by-the-random-number-of-days#2139582>.
   RETURN CAST(now() - '1 year'::interval * random() AS date);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
