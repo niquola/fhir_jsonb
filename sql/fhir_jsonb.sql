@@ -1,4 +1,5 @@
 CREATE EXTENSION fhir_jsonb;
+CREATE EXTENSION jsquery;
 set escape_string_warning=off;
 
 select count(*)
