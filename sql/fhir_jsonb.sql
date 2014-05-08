@@ -23,6 +23,16 @@ doc #>> '{class}'
 FROM encounters
 ORDER BY doc #>> '{class}';
 
+SELECT DISTINCT ON (doc #>> '{participant,0,individual,type}')
+doc #>> '{participant,0,individual,type,0,coding,0,code}'
+FROM encounters
+ORDER BY doc #>> '{participant,0,individual,type}';
+
+SELECT DISTINCT ON (doc #>> '{participant,0,individual,reference}')
+doc #>> '{participant,0,individual,reference}'
+FROM encounters
+ORDER BY doc #>> '{participant,0,individual,reference}';
+
 select count(*)
 from observations;
 
