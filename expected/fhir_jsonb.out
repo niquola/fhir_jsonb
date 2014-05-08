@@ -8,6 +8,16 @@ from patients;
    100
 (1 row)
 
+SELECT DISTINCT ON (doc #>> '{"active"}')
+doc #>> '{"active"}'
+FROM patients
+ORDER BY doc #>> '{"active"}';
+ ?column? 
+----------
+ false
+ true
+(2 rows)
+
 select count(*)
 from encounters;
  count 
@@ -22,10 +32,10 @@ from observations;
  10000
 (1 row)
 
-SELECT DISTINCT ON (doc #>> '{status}')
-doc #>> '{status}'
+SELECT DISTINCT ON (doc #>> '{"status"}')
+doc #>> '{"status"}'
 FROM observations
-ORDER BY doc #>> '{status}';
+ORDER BY doc #>> '{"status"}';
      ?column?     
 ------------------
  amended
@@ -33,6 +43,6 @@ ORDER BY doc #>> '{status}';
  entered in error
  final
  preliminary
- 
+ registered
 (6 rows)
 

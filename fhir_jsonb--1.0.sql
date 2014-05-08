@@ -90,7 +90,7 @@ DECLARE
   l int := array_length(a, 1);
 BEGIN
   -- <http://stackoverflow.com/questions/14299043/postgresql-pl-pgsql-random-value-from-array-of-values#14328164>.
-  RETURN a[floor((random()*l))::int];
+  RETURN a[floor((random() * l + 1))::int];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -154,7 +154,7 @@ BEGIN
           '{{\.birth_date}}',
           random_time()
         ),
-        '{{.is_active}}',
+        '{{\.is_active}}',
         patient_random_is_active()
       )
       AS jsonb
