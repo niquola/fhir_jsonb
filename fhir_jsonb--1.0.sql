@@ -5,12 +5,21 @@ CREATE FUNCTION random_start_time()
   RETURNS varchar AS
 $func$
 BEGIN
-  RETURN CAST(now() - '1 year'::interval * random() AS date);
+  RETURN random_time();
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
 -- TODO: End time be greater than start time.
 CREATE FUNCTION random_end_time()
+  RETURNS varchar AS
+$func$
+BEGIN
+  RETURN random_time();
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+-- <http://stackoverflow.com/questions/2139396/postgresql-change-date-by-the-random-number-of-days#2139582>.
+CREATE FUNCTION random_time()
   RETURNS varchar AS
 $func$
 BEGIN
