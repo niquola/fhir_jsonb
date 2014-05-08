@@ -22,3 +22,17 @@ from observations;
  10000
 (1 row)
 
+SELECT DISTINCT ON (doc #>> '{status}')
+doc #>> '{status}'
+FROM observations
+ORDER BY doc #>> '{status}';
+     ?column?     
+------------------
+ amended
+ cancelled
+ entered in error
+ final
+ preliminary
+ 
+(6 rows)
+

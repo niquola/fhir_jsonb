@@ -10,3 +10,8 @@ from encounters;
 
 select count(*)
 from observations;
+
+SELECT DISTINCT ON (doc #>> '{status}')
+doc #>> '{status}'
+FROM observations
+ORDER BY doc #>> '{status}';
