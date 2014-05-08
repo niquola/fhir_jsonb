@@ -33,6 +33,11 @@ doc #>> '{participant,0,individual,reference}'
 FROM encounters
 ORDER BY doc #>> '{participant,0,individual,reference}';
 
+SELECT DISTINCT ON (doc #>> '{reason}')
+doc #>> '{reason,text}'
+FROM encounters
+ORDER BY doc #>> '{reason}';
+
 select count(*)
 from observations;
 

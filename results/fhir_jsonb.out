@@ -93,6 +93,17 @@ ORDER BY doc #>> '{participant,0,individual,reference}';
  William Harvey
 (22 rows)
 
+SELECT DISTINCT ON (doc #>> '{reason}')
+doc #>> '{reason,text}'
+FROM encounters
+ORDER BY doc #>> '{reason}';
+                         ?column?                          
+-----------------------------------------------------------
+ f asdfsd fasdfsad fdasfklsdjaflksda fjsdafjasdklf jsdklfj
+ fdaff asdf asdfasdf sdaf asdfsd fasdfsad fdasfk
+ lsdjaflksda fjsdafjasdklf jsdklfj
+(3 rows)
+
 select count(*)
 from observations;
  count 
