@@ -61,13 +61,13 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION observation_random_name()
+CREATE FUNCTION observation_random_name(n integer)
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['"name": {"coding": [{"system": "http://loinc.org", "code": "8310-5", "display": "Body temperature"}], "text": "Body temperature"},', '"name": {"coding": [{"system": "http://loinc.org", "code": "55284-4", "display": "Blood pressure systolic & diastolic"}]},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},', '"name": {"coding": [{"system": "http://loinc.org", "code": "noise", "display": "noise"}], "text": "Noise "},'];
 BEGIN
-  RETURN random_array_element(a);
+  RETURN a[n % array_length(a, 1) + 1];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -123,29 +123,30 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION random_start_time()
+CREATE FUNCTION random_start_time(n integer, max integer)
   RETURNS varchar AS
 $func$
 BEGIN
-  RETURN random_time();
+  RETURN random_time(n, max);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
 -- TODO: End time be greater than start time.
-CREATE FUNCTION random_end_time()
+CREATE FUNCTION random_end_time(n integer, max integer)
   RETURNS varchar AS
 $func$
 BEGIN
-  RETURN random_time();
+  RETURN random_time(n, max);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION random_time()
+CREATE FUNCTION random_time(n integer, max integer)
   RETURNS varchar AS
 $func$
 BEGIN
   -- <http://stackoverflow.com/questions/2139396/postgresql-change-date-by-the-random-number-of-days#2139582>.
-  RETURN CAST(now() - '1 year'::interval * random() AS date);
+  --RETURN CAST(now() - '1 year'::interval * random() AS date);
+  RETURN CAST(now() - '1 year'::interval * (n::float / max) AS date);
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -187,7 +188,7 @@ BEGIN
         regexp_replace(
           regexp_replace(template, '{{\.i}}', n::varchar),
           '{{\.birth_date}}',
-          random_time()
+          random_time(n, 100)
         ),
         '{{\.is_active}}',
         patient_random_is_active()
@@ -234,10 +235,10 @@ BEGIN
             encounter_random_reason()
           ),
           '{{\.start_time}}',
-          random_start_time()
+          random_start_time(n, 1000)
         ),
         '{{\.end_time}}',
-        random_end_time()
+        random_end_time(n, 1000)
       )
       AS jsonb
     )
@@ -266,13 +267,13 @@ BEGIN
               observation_random_status()
             ),
             '{{\.start_time}}',
-            random_start_time()
+            random_start_time(n, 10000)
           ),
           '{{\.end_time}}',
-          random_end_time()
+          random_end_time(n, 10000)
         ),
         '{{\.name}}',
-        observation_random_name()
+        observation_random_name(n)
       )
       AS jsonb
     )
@@ -311,7 +312,7 @@ BEGIN
           condition_random_status()
         ),
         '{{\.end_time}}',
-        random_end_time()
+        random_end_time(n, 10000)
       )
       AS jsonb
     )

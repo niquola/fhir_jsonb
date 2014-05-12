@@ -203,17 +203,23 @@ ORDER BY doc #>> '{status}';
  registered
 (6 rows)
 
--- SELECT count(*) FROM observations
--- WHERE doc @@ '(
---   "name"."coding".# (
---     "system" = "http://loinc.org"
---      &
---     "code" = "8310-5"
---   )
--- )'
--- AND
--- (doc #>> '{appliesPeriod,start}')::timestamp > CURRENT_DATE - INTERVAL '3 month'
--- LIMIT 10;
+SELECT count(*)
+FROM observations
+WHERE doc @@ '(
+  "name"."coding".# (
+    "system" = "http://loinc.org"
+     &
+    "code" = "8310-5"
+  )
+)'
+AND
+(doc #>> '{appliesPeriod,start}')::timestamp > CURRENT_DATE - INTERVAL '3 month'
+LIMIT 10;
+ count 
+-------
+   243
+(1 row)
+
 SELECT count(*)
 FROM conditions;
  count 
