@@ -1,17 +1,17 @@
 CREATE EXTENSION fhir_jsonb;
 CREATE EXTENSION jsquery;
-set escape_string_warning=off;
+SET escape_string_warning=off;
 
-select count(*)
-from patients;
+SELECT count(*)
+FROM patients;
 
 SELECT DISTINCT ON (doc #>> '{active}')
 doc #>> '{active}'
 FROM patients
 ORDER BY doc #>> '{active}';
 
-select count(*)
-from encounters;
+SELECT count(*)
+FROM encounters;
 
 SELECT DISTINCT ON (doc #>> '{status}')
 doc #>> '{status}'
@@ -38,8 +38,8 @@ doc #>> '{reason,text}'
 FROM encounters
 ORDER BY doc #>> '{reason}';
 
-select count(*)
-from observations;
+SELECT count(*)
+FROM observations;
 
 SELECT DISTINCT ON (doc #>> '{name}')
 doc #>> '{name,coding,0,display}'
