@@ -50,3 +50,21 @@ SELECT DISTINCT ON (doc #>> '{status}')
 doc #>> '{status}'
 FROM observations
 ORDER BY doc #>> '{status}';
+
+SELECT count(*)
+FROM conditions;
+
+SELECT DISTINCT ON (doc #>> '{code}')
+doc #>> '{code,coding,0,code}'
+FROM conditions
+ORDER BY doc #>> '{code}';
+
+SELECT DISTINCT ON (doc #>> '{category}')
+doc #>> '{category,coding,0,code}'
+FROM conditions
+ORDER BY doc #>> '{category}';
+
+SELECT DISTINCT ON (doc #>> '{status}')
+doc #>> '{status}'
+FROM conditions
+ORDER BY doc #>> '{status}';

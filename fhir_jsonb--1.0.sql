@@ -71,12 +71,41 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-
 CREATE FUNCTION observation_random_status()
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['amended','cancelled','entered in error','final','preliminary','registered'];
+BEGIN
+  RETURN random_array_element(a);
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+CREATE FUNCTION condition_random_code()
+  RETURNS varchar AS
+$func$
+DECLARE
+  a varchar[] := array['433.01','433.10','433.11','433.21','433.31','433.81','433.91','434.00','434.01','434.11','434.91','436','430','431','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise'];
+BEGIN
+  RETURN random_array_element(a);
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+CREATE FUNCTION condition_random_category()
+  RETURNS varchar AS
+$func$
+DECLARE
+  a varchar[] := array['complaint','symptom','finding','diagnosis'];
+BEGIN
+  RETURN random_array_element(a);
+END
+$func$ LANGUAGE plpgsql VOLATILE;
+
+CREATE FUNCTION condition_random_status()
+  RETURNS varchar AS
+$func$
+DECLARE
+  a varchar[] := array['provisional','working','working','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','refuted'];
 BEGIN
   RETURN random_array_element(a);
 END
@@ -123,6 +152,7 @@ $func$ LANGUAGE plpgsql VOLATILE;
 DROP TABLE IF EXISTS patients;
 DROP TABLE IF EXISTS encounters;
 DROP TABLE IF EXISTS observations;
+DROP TABLE IF EXISTS conditions;
 
 CREATE TABLE patients (
   id SERIAL primary key,
@@ -135,6 +165,11 @@ CREATE TABLE encounters (
 );
 
 CREATE TABLE observations (
+  id SERIAL primary key,
+  doc jsonb
+);
+
+CREATE TABLE conditions (
   id SERIAL primary key,
   doc jsonb
 );
@@ -238,6 +273,41 @@ BEGIN
         ),
         '{{\.name}}',
         observation_random_name()
+      )
+      AS jsonb
+    )
+  FROM generate_series(1, 10000) n;
+END $$;
+
+DO $$
+DECLARE template varchar;
+BEGIN
+  SELECT '{"resourceType": "Condition", "text": {"status": "generated", "div": "some text"}, "subject": {"reference": "Patient/{{.patient_id}}", "display": "Patient {{.patient_id}}"}, "encounter": {"reference": "Encounter/{{.patient_id}}"}, "asserter": {"reference": "Patient/f001", "display": "P. van de Heuvel"}, "dateAsserted": "{{.start_time}}", "code": {"coding": [{"system": "http://snomed.info/sct", "code": "{{.code}}", "display": "{{.code}}"}]}, "category": {"coding": [{"system": "http://snomed.info/sct", "code": "{{.category}}", "display": "{{.category}}"}]}, "status": "{{.status}}", "severity": {"coding": [{"system": "http://snomed.info/sct", "code": "6736007", "display": "Moderate"}]}, "onsetDate": "{{.end_time}}", "evidence": [ {"code": {"coding": [{"system": "http://snomed.info/sct", "code": "426396005", "display": "Cardiac chest pain"}]}}], "location": [{"code": {"coding": [ {"system": "http://snomed.info/sct", "code": "40768004", "display": "Left thorax"}]}, "detail": "heart structure"}]}'
+  INTO template;
+
+  INSERT INTO conditions (doc)
+  SELECT
+    CAST (
+      regexp_replace(
+        regexp_replace(
+          regexp_replace(
+            regexp_replace(
+              regexp_replace(
+                template,
+                '{{\.patient_id}}',
+                CAST ((n / 10 + 1) AS varchar)
+              ),
+              '{{\.code}}',
+              condition_random_code()
+            ),
+            '{{\.category}}',
+            condition_random_category()
+          ),
+          '{{\.status}}',
+          condition_random_status()
+        ),
+        '{{\.end_time}}',
+        random_end_time()
       )
       AS jsonb
     )

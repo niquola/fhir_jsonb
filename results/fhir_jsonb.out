@@ -136,3 +136,57 @@ ORDER BY doc #>> '{status}';
  registered
 (6 rows)
 
+SELECT count(*)
+FROM conditions;
+ count 
+-------
+ 10000
+(1 row)
+
+SELECT DISTINCT ON (doc #>> '{code}')
+doc #>> '{code,coding,0,code}'
+FROM conditions
+ORDER BY doc #>> '{code}';
+ ?column? 
+----------
+ 430
+ 431
+ 433.01
+ 433.10
+ 433.11
+ 433.21
+ 433.31
+ 433.81
+ 433.91
+ 434.00
+ 434.01
+ 434.11
+ 434.91
+ 436
+ noise
+(15 rows)
+
+SELECT DISTINCT ON (doc #>> '{category}')
+doc #>> '{category,coding,0,code}'
+FROM conditions
+ORDER BY doc #>> '{category}';
+ ?column?  
+-----------
+ complaint
+ diagnosis
+ finding
+ symptom
+(4 rows)
+
+SELECT DISTINCT ON (doc #>> '{status}')
+doc #>> '{status}'
+FROM conditions
+ORDER BY doc #>> '{status}';
+  ?column?   
+-------------
+ confirmed
+ provisional
+ refuted
+ working
+(4 rows)
+
