@@ -282,7 +282,7 @@ END $$;
 DO $$
 DECLARE template varchar;
 BEGIN
-  SELECT '{"resourceType": "Condition", "text": {"status": "generated", "div": "some text"}, "subject": {"reference": "Patient/{{.patient_id}}", "display": "Patient {{.patient_id}}"}, "encounter": {"reference": "Encounter/{{.patient_id}}"}, "asserter": {"reference": "Patient/f001", "display": "P. van de Heuvel"}, "dateAsserted": "{{.start_time}}", "code": {"coding": [{"system": "http://snomed.info/sct", "code": "{{.code}}", "display": "{{.code}}"}]}, "category": {"coding": [{"system": "http://snomed.info/sct", "code": "{{.category}}", "display": "{{.category}}"}]}, "status": "{{.status}}", "severity": {"coding": [{"system": "http://snomed.info/sct", "code": "6736007", "display": "Moderate"}]}, "onsetDate": "{{.end_time}}", "evidence": [ {"code": {"coding": [{"system": "http://snomed.info/sct", "code": "426396005", "display": "Cardiac chest pain"}]}}], "location": [{"code": {"coding": [ {"system": "http://snomed.info/sct", "code": "40768004", "display": "Left thorax"}]}, "detail": "heart structure"}]}'
+  SELECT '{"resourceType": "Condition", "text": {"status": "generated", "div": "some text"}, "subject": {"reference": "Patient/{{.patient_id}}", "display": "Patient {{.patient_id}}"}, "encounter": {"reference": "Encounter/{{.encounter_id}}"}, "asserter": {"reference": "Patient/f001", "display": "P. van de Heuvel"}, "dateAsserted": "{{.start_time}}", "code": {"coding": [{"system": "http://snomed.info/sct", "code": "{{.code}}", "display": "{{.code}}"}]}, "category": {"coding": [{"system": "http://snomed.info/sct", "code": "{{.category}}", "display": "{{.category}}"}]}, "status": "{{.status}}", "severity": {"coding": [{"system": "http://snomed.info/sct", "code": "6736007", "display": "Moderate"}]}, "onsetDate": "{{.end_time}}", "evidence": [ {"code": {"coding": [{"system": "http://snomed.info/sct", "code": "426396005", "display": "Cardiac chest pain"}]}}], "location": [{"code": {"coding": [ {"system": "http://snomed.info/sct", "code": "40768004", "display": "Left thorax"}]}, "detail": "heart structure"}]}'
   INTO template;
 
   INSERT INTO conditions (doc)
@@ -293,8 +293,12 @@ BEGIN
           regexp_replace(
             regexp_replace(
               regexp_replace(
-                template,
-                '{{\.patient_id}}',
+                regexp_replace(
+                  template,
+                  '{{\.patient_id}}',
+                  CAST ((n / 100 + 1) AS varchar)
+                ),
+                '{{\.encounter_id}}',
                 CAST ((n / 10 + 1) AS varchar)
               ),
               '{{\.code}}',
