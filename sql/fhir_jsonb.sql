@@ -126,12 +126,16 @@ doc #>> '{status}'
 FROM conditions
 ORDER BY doc #>> '{status}';
 
--- SELECT
--- doc#>'{status}',
--- doc#>'{category,coding}',
--- doc#>'{code,coding}'
--- FROM conditions
--- LIMIT 10;
+SELECT
+	doc#>'{status}' as status,
+	doc#>'{category,coding}' as category,
+	doc#>'{code,coding}' as code
+FROM conditions
+ORDER BY
+	doc#>'{status}',
+	doc#>'{category,coding}',
+	doc#>'{code,coding}'
+LIMIT 10;
 
 -- SELECT count(*)
 -- FROM conditions

@@ -81,33 +81,36 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION condition_random_code()
+CREATE FUNCTION condition_random_code(n integer)
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['433.01','433.10','433.11','433.21','433.31','433.81','433.91','434.00','434.01','434.11','434.91','436','430','431','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise','noise'];
 BEGIN
-  RETURN random_array_element(a);
+  --RETURN random_array_element(a);
+  RETURN a[n % array_length(a, 1) + 1];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION condition_random_category()
+CREATE FUNCTION condition_random_category(n integer)
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['complaint','symptom','finding','diagnosis'];
 BEGIN
-  RETURN random_array_element(a);
+  --RETURN random_array_element(a);
+  RETURN a[n % array_length(a, 1) + 1];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION condition_random_status()
+CREATE FUNCTION condition_random_status(n integer)
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['provisional','working','working','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','confirmed','refuted'];
 BEGIN
-  RETURN random_array_element(a);
+  --RETURN random_array_element(a);
+  RETURN a[n % array_length(a, 1) + 1];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -303,13 +306,13 @@ BEGIN
                 CAST ((n / 10 + 1) AS varchar)
               ),
               '{{\.code}}',
-              condition_random_code()
+              condition_random_code(n)
             ),
             '{{\.category}}',
-            condition_random_category()
+            condition_random_category(n)
           ),
           '{{\.status}}',
-          condition_random_status()
+          condition_random_status(n)
         ),
         '{{\.end_time}}',
         random_end_time(n, 10000)

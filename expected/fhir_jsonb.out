@@ -274,12 +274,30 @@ ORDER BY doc #>> '{status}';
  working
 (4 rows)
 
--- SELECT
--- doc#>'{status}',
--- doc#>'{category,coding}',
--- doc#>'{code,coding}'
--- FROM conditions
--- LIMIT 10;
+SELECT
+	doc#>'{status}' as status,
+	doc#>'{category,coding}' as category,
+	doc#>'{code,coding}' as code
+FROM conditions
+ORDER BY
+	doc#>'{status}',
+	doc#>'{category,coding}',
+	doc#>'{code,coding}'
+LIMIT 10;
+   status    |                                        category                                         |                                     code                                      
+-------------+-----------------------------------------------------------------------------------------+-------------------------------------------------------------------------------
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+ "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
+(10 rows)
+
 -- SELECT count(*)
 -- FROM conditions
 -- WHERE
