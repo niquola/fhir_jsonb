@@ -70,17 +70,18 @@ doc @@
       "system" = "encounter-participant-type")) &
   !("status" && ["planned", "finished", "cancelled"]))';
 
--- SELECT count(*)
--- FROM encounters
--- WHERE
--- doc @@
--- '("class" = "emergency" &
---   "participant".#."individual" (
---     "reference" = "Galen" &
---     "type".#."coding".# (
---       "code" && ["ADM", "ATND"] &
---       "system" = "encounter-participant-type")) &
---   !("status" && ["planned", "finished", "cancelled"]))';
+SELECT count(*)
+FROM encounters
+WHERE
+doc @@
+'("class" = "emergency" &
+  "participant".#."individual" (
+    "reference" = "Galen" &
+    "type".#."coding".# (
+      "code" in ("ADM", "ATND") &
+      "system" = "encounter-participant-type")) &
+  !("status" && ["planned", "finished", "cancelled"]))';
+
 SELECT count(*)
 FROM observations;
 
