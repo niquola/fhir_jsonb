@@ -1,8 +1,8 @@
 CREATE EXTENSION fhir_jsonb;
 CREATE EXTENSION jsquery;
-set escape_string_warning=off;
-select count(*)
-from patients;
+SET escape_string_warning=off;
+SELECT count(*)
+FROM patients;
  count 
 -------
    100
@@ -18,8 +18,8 @@ ORDER BY doc #>> '{active}';
  true
 (2 rows)
 
-select count(*)
-from encounters;
+SELECT count(*)
+FROM encounters;
  count 
 -------
   1000
@@ -104,8 +104,8 @@ ORDER BY doc #>> '{reason}';
  lsdjaflksda fjsdafjasdklf jsdklfj
 (3 rows)
 
-select count(*)
-from observations;
+SELECT count(*)
+FROM observations;
  count 
 -------
  10000
