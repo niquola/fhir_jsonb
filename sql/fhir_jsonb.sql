@@ -38,21 +38,25 @@ doc #>> '{reason,text}'
 FROM encounters
 ORDER BY doc #>> '{reason}';
 
--- SELECT
---   doc#>'{participant,0}' as part,
---   doc#>'{class}' as cls,
---   doc#>'{status}' as status
--- FROM encounters
--- WHERE
--- doc @@
--- '("class" = "emergency" &
---   "participant".#."individual" (
---     "reference" = "Galen" &
---     "type".#."coding".# (
---       "code" && ["ADM", "ATND"] &
---       "system" = "encounter-participant-type")) &
---   !("status" && ["planned", "finished", "cancelled"]))'
--- LIMIT 10;
+SELECT
+  doc#>'{participant,0}' as part,
+  doc#>'{class}' as cls,
+  doc#>'{status}' as status
+FROM encounters
+WHERE
+doc @@
+'("class" = "emergency" &
+  "participant".#."individual" (
+    "reference" = "Galen" &
+    "type".#."coding".# (
+      "code" in ("ADM", "ATND") &
+      "system" = "encounter-participant-type")) &
+  !("status" && ["planned", "finished", "cancelled"]))'
+ORDER BY
+  doc#>'{participant,0}',
+  doc#>'{class}',
+  doc#>'{status}'
+LIMIT 100;
 
 SELECT count(*) > 0
 FROM encounters

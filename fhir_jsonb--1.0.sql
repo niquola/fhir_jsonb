@@ -11,43 +11,43 @@ BEGIN
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION encounter_random_status()
+CREATE FUNCTION encounter_random_status(n integer)
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['planned','in progress','onleave','finished','cancelled'];
 BEGIN
-  RETURN random_array_element(a);
+  RETURN a[n % 5 + 1];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION encounter_random_class()
+CREATE FUNCTION encounter_random_class(n integer)
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['emergency','inpatient'];
 BEGIN
-  RETURN random_array_element(a);
+  RETURN a[n % 2 + 1];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION encounter_random_part_type()
+CREATE FUNCTION encounter_random_part_type(n integer)
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['ADM','ATND','CALLBCK','CON','DIS','ESC','REF'];
 BEGIN
-  RETURN random_array_element(a);
+  RETURN a[n % 7 + 1];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
-CREATE FUNCTION encounter_random_phys()
+CREATE FUNCTION encounter_random_phys(n integer)
   RETURNS varchar AS
 $func$
 DECLARE
   a varchar[] := array['Charles R. Drew','Helen Flanders Dunbar','Galen','Ian Olver','Garcia de Orta','Christiaan Eijkman','Pierre Fauchard','Rene Geronimo Favaloro','Alexander Fleming','Girolamo Fracastoro','Sigmund Freud','Daniel Carleton Gajdusek','Henry Gray','George E. Goodfellow','William Harvey','Ernst Haeckel','Henry Heimlich','Orvan Hess','John Hunter','Hippocrates','Elliott P. Joslin','Edward Jenner'];
 BEGIN
-  RETURN random_array_element(a);
+  RETURN a[n % array_length(a, 1) + 1];
 END
 $func$ LANGUAGE plpgsql VOLATILE;
 
@@ -219,16 +219,16 @@ BEGIN
                       CAST ((n / 10 + 1) AS varchar)
                     ),
                     '{{\.status}}',
-                    encounter_random_status()
+                    encounter_random_status(n)
                   ),
                   '{{\.class}}',
-                  encounter_random_class()
+                  encounter_random_class(n)
                 ),
                 '{{\.part_type}}',
-                encounter_random_part_type()
+                encounter_random_part_type(n)
               ),
               '{{\.phys}}',
-              encounter_random_phys()
+              encounter_random_phys(n)
             ),
             '{{\.reason}}',
             encounter_random_reason()
