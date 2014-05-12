@@ -298,16 +298,21 @@ LIMIT 10;
  "confirmed" | [{"code": "complaint", "system": "http://snomed.info/sct", "display": "{{.category}}"}] | [{"code": "430", "system": "http://snomed.info/sct", "display": "{{.code}}"}]
 (10 rows)
 
--- SELECT count(*)
--- FROM conditions
--- WHERE
--- doc @@
--- '("status" = "confirmed" &
---   "category"."coding".# (
---     "system" = "http://snomed.info/sct" &
---     "code" = "diagnosis") &
---   "code"."coding".#."system" = "http://snomed.info/sct")'
--- AND (doc #>> '{code,coding,0,code}' ) in  (SELECT code from stroke_diagnoses) ;
+SELECT count(*)
+FROM conditions
+WHERE
+doc @@
+'("status" = "confirmed" &
+  "category"."coding".# (
+    "system" = "http://snomed.info/sct" &
+    "code" = "diagnosis") &
+  "code"."coding".#."system" = "http://snomed.info/sct")';
+ count 
+-------
+  1834
+(1 row)
+
+--AND (doc #>> '{code,coding,0,code}' ) in  (SELECT code from stroke_diagnoses) ;
 -- SELECT count(*)
 -- FROM conditions
 -- WHERE
