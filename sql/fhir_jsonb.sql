@@ -54,6 +54,18 @@ ORDER BY doc #>> '{reason}';
 --   !("status" && ["planned", "finished", "cancelled"]))'
 -- LIMIT 10;
 
+SELECT count(*) > 0
+FROM encounters
+WHERE
+doc @@
+'("class" = "emergency" &
+  "participant".#."individual" (
+    "reference" = "Galen" &
+    "type".#."coding".# (
+      "code" in ("ADM","ATND") &
+      "system" = "encounter-participant-type")) &
+  !("status" && ["planned", "finished", "cancelled"]))';
+
 -- SELECT count(*)
 -- FROM encounters
 -- WHERE
@@ -65,7 +77,6 @@ ORDER BY doc #>> '{reason}';
 --       "code" && ["ADM", "ATND"] &
 --       "system" = "encounter-participant-type")) &
 --   !("status" && ["planned", "finished", "cancelled"]))';
-
 SELECT count(*)
 FROM observations;
 
