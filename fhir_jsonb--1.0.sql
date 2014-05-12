@@ -165,7 +165,7 @@ END $$;
 DO $$
 DECLARE template varchar;
 BEGIN
-  SELECT '{"resourceType": "Encounter", "text": {"status": "generated", "div": "text"}, "identifier": [{"use": "temp", "value": "{{.i}}"}], "status": "{{.status}}", "class": "{{.class}}", "type": [{"coding": [{"system": "http://snomed.info/sct", "code": "183807002", "display": "Inpatient stay for nine days"}]}], "subject": {"reference": "Patient{{.i}}", "display": "Roel"}, "participant": [{"individual": {"type": [{"coding": [{"system": "encounter-participant-type", "code": "{{.part_type}}"}]}], "reference": "{{.phys}}"}}], "reason": {"text": "{{.reason}}"}, "priority": {"coding": [{"system": "http://snomed.info/sct", "code": "394849002", "display": "High priority"}]}, "hospitalization": {"admitSource": {"coding": [{"system": "http://snomed.info/sct", "code": "309902002", "display": "Clinical Oncology Department"}]}, "period": {"start": "{{.start_time}}", "end": "{{.end_time}}"}, "diet": {"coding": [{"system": "http://snomed.info/sct", "code": "276026009", "display": "Fluid balance regulation"}]}, "reAdmission": false}, "serviceProvider": {"reference": "Organization/f201"}}'
+  SELECT '{"resourceType": "Encounter", "text": {"status": "generated", "div": "text"}, "identifier": [{"use": "temp", "value": "{{.patient_id}}"}], "status": "{{.status}}", "class": "{{.class}}", "type": [{"coding": [{"system": "http://snomed.info/sct", "code": "183807002", "display": "Inpatient stay for nine days"}]}], "subject": {"reference": "Patient/{{.patient_id}}", "display": "Roel"}, "participant": [{"individual": {"type": [{"coding": [{"system": "encounter-participant-type", "code": "{{.part_type}}"}]}], "reference": "{{.phys}}"}}], "reason": {"text": "{{.reason}}"}, "priority": {"coding": [{"system": "http://snomed.info/sct", "code": "394849002", "display": "High priority"}]}, "hospitalization": {"admitSource": {"coding": [{"system": "http://snomed.info/sct", "code": "309902002", "display": "Clinical Oncology Department"}]}, "period": {"start": "{{.start_time}}", "end": "{{.end_time}}"}, "diet": {"coding": [{"system": "http://snomed.info/sct", "code": "276026009", "display": "Fluid balance regulation"}]}, "reAdmission": false}, "serviceProvider": {"reference": "Organization/f201"}}'
   INTO template;
 
   INSERT INTO encounters (doc)
@@ -178,7 +178,11 @@ BEGIN
               regexp_replace(
                 regexp_replace(
                   regexp_replace(
-                    regexp_replace(template, '{{\.i}}', n::varchar),
+                    regexp_replace(
+                      template,
+                      '{{\.patient_id}}',
+                      CAST ((n / 10 + 1) AS varchar)
+                    ),
                     '{{\.status}}',
                     encounter_random_status()
                   ),
@@ -208,7 +212,7 @@ END $$;
 DO $$
 DECLARE template varchar;
 BEGIN
-  SELECT '{"resourceType": "Observation", "text": {"status": "generated", "div": ""}, {{.name}} "valueQuantity": {"value": 39, "units": "degrees C", "system": "http://snomed.info/sct", "code": "258710007"}, "interpretation": {"coding": [{"system": "http://hl7.org/fhir/v2/0078", "code": "H"}]}, "appliesPeriod": {"start": "{{.start_time}}", "end": "{{.end_time}}"}, "issued": "2013-04-04T13:27:00+01:00", "status": "{{.status}}", "reliability": "questionable", "bodySite": {"coding": [{"system": "http://snomed.info/sct", "code": "38266002", "display": "Entire body as a whole"}]}, "method": {"coding": [{"system": "http://snomed.info/sct", "code": "89003005", "display": "Oral temperature taking"}]}, "subject": {"reference": "Patient/{{.id}}", "display": "Patient {{.id}}"}, "performer": [{"reference": "Practitioner/f201"}], "referenceRange": [{"low": {"value": 37.5, "units": "degrees C"}}]}'
+  SELECT '{"resourceType": "Observation", "text": {"status": "generated", "div": ""}, {{.name}} "valueQuantity": {"value": 39, "units": "degrees C", "system": "http://snomed.info/sct", "code": "258710007"}, "interpretation": {"coding": [{"system": "http://hl7.org/fhir/v2/0078", "code": "H"}]}, "appliesPeriod": {"start": "{{.start_time}}", "end": "{{.end_time}}"}, "issued": "2013-04-04T13:27:00+01:00", "status": "{{.status}}", "reliability": "questionable", "bodySite": {"coding": [{"system": "http://snomed.info/sct", "code": "38266002", "display": "Entire body as a whole"}]}, "method": {"coding": [{"system": "http://snomed.info/sct", "code": "89003005", "display": "Oral temperature taking"}]}, "subject": {"reference": "Patient/{{.patient_id}}", "display": "Patient {{.patient_id}}"}, "performer": [{"reference": "Practitioner/f201"}], "referenceRange": [{"low": {"value": 37.5, "units": "degrees C"}}]}'
   INTO template;
 
   INSERT INTO observations (doc)
@@ -218,7 +222,11 @@ BEGIN
         regexp_replace(
           regexp_replace(
             regexp_replace(
-              regexp_replace(template, '{{\.id}}', n::varchar),
+              regexp_replace(
+                template,
+                '{{\.patient_id}}',
+                CAST ((n / 10 + 1) AS varchar)
+              ),
               '{{\.status}}',
               observation_random_status()
             ),
